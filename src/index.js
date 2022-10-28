@@ -5,11 +5,15 @@ import './bootstrap.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import UserSignupPage from './pages/UserSignupPage';
+import UserLoginPage from './pages/UserLoginPage';
+import "./i18n";
+import LanguageSelector from './components/LanguageSelector'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <UserSignupPage />
+    <UserLoginPage />
+    <LanguageSelector />
   </React.StrictMode>
 );
 
