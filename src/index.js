@@ -1,20 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import './bootstrap.scss';
-import App from './App';
+import '../src/bootstrap.scss'
 import reportWebVitals from './reportWebVitals';
-import UserSignupPage from './pages/UserSignupPage';
-import UserLoginPage from './pages/UserLoginPage';
 import "./i18n";
-import LanguageSelector from './components/LanguageSelector'
+import App from './container/App';
+import AuthenticationContext from './shared/AuthenticationContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <UserLoginPage />
-    <LanguageSelector />
-  </React.StrictMode>
+    <AuthenticationContext>
+        <App />
+    </AuthenticationContext>
 );
 
 // If you want to start measuring performance in your app, pass a function
