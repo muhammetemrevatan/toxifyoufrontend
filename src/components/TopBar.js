@@ -1,58 +1,68 @@
-import React, { Component } from 'react';
+import React from 'react';
 import logo from '../assets/logo.PNG';
-import { Link } from 'react-router-dom';
-import { withTranslation } from 'react-i18next';
-import { Authentication } from '../shared/AuthenticationContext';
+import {Link, useHistory, useParams} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
+import {useDispatch, useSelector} from 'react-redux';
+import {logoutSuccess} from '../redux/authActions';
+import LanguageSelector from "./LanguageSelector";
 
-class TopBar extends Component {
+const TopBar = (props) => {
 
-    static contextType = Authentication;
+    const {t} = useTranslation();
+    const dispatch = useDispatch();
+    const {push} = useHistory();
+    const {username, isLoggedIn} = useSelector((store) => ({
+        isLoggedIn: store.isLoggedIn,
+        username: store.username
+    }));
 
-    render() {
-        const { t } = this.props;
-        const { state, onLogoutSuccess } = this.context;
-        const { isLoggedIn, username } = state;
-        let links = (
-            <ul className='navbar-nav ms-auto'>
+    const onLogoutSuccess = () => {
+        dispatch(logoutSuccess());
+        push('/');
+    }
+
+    let links = (
+        <ul className='navbar-nav'>
+            <li>
+                <Link className='nav-link text-light ' to="/login">
+                    {t('Login')}
+                </Link>
+            </li>
+            <li>
+                <Link className='nav-link text-light text-nowrap' to="/signup">
+                    {t('Sign up')}
+                </Link>
+            </li>
+        </ul>
+    );
+    if (isLoggedIn) {
+        links = (
+            <ul className='navbar-nav'>
                 <li>
-                    <Link className='nav-link' to="/login">
-                        {t('Login')}
+                    <Link className='nav-link btn btn-outline-warning text-light' to={`/user/${username}`}>
+                         {username}
                     </Link>
                 </li>
-                <li>
-                    <Link className='nav-link' to="/signup">
-                        {t('Sign up')}
-                    </Link>
+                <li className='nav-link btn btn-outline-danger ms-2 text-nowrap text-light' style={{cursor: 'pointer'}}
+                    onClick={onLogoutSuccess}>
+                    {t('Logout')}
                 </li>
             </ul>
-        );
-        if (isLoggedIn) {
-            links = (
-                <ul className='navbar-nav ms-auto'>
-                    <li>
-                        <Link className='nav-link' to={`/user/${username}`}>
-                            {username}
-                        </Link>
-                    </li>
-                    <li className='nav-link' style={{ cursor: 'pointer' }} onClick={onLogoutSuccess}>
-                        {t('Logout')}
-                    </li>
-                </ul>
-            )
-        }
-        return (
-            <div className='shadow-sm bg-light mb-2'>
-                <nav className="navbar navbar-light container navbar-expand">
-                    <Link className="navbar-brand" to="/">
-                        <img src={logo} width="60" height="60" className="d-inline-block align-top" alt="Toxifyou Logo" />
-                        ToxifYou
-                    </Link>
-                    {links}
-
-                </nav>
-            </div>
         )
     }
+    return (
+        <div className='shadow-sm mb-2 bg-primary'>
+            <nav className="navbar navbar-light container navbar-expand">
+                <Link className="navbar-brand" to="/">
+                    <img src={logo} width="60" height="60" className="me-2" alt="Toxifyou Logo"/>
+                    <div className='d-inline nav-link text-light'>ToxifYou</div>
+                </Link>
+                <div className="d-flex ms-auto">
+                    {links}
+                    <LanguageSelector/>
+                </div>
+            </nav>
+        </div>
+    )
 }
-
-export default withTranslation()(TopBar);
+export default TopBar;

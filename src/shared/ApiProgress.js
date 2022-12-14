@@ -1,51 +1,54 @@
-import React, { Component } from 'react';
+import {useEffect, useState} from 'react';
 import axios from "axios";
 
-function getDisplayName(WrappedComponent) {
-    return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
+export const useApiProgress = (apiMethod, apiPath) => {
+    const [pendingApiCall, setPendingApiCall] = useState(false)
 
-export function withApiProgress(WrappedComponent, apiPath) {
-    return class extends Component {
+    useEffect(() => {
+        let requestInterceptors, responseInterceptors;
 
-        static displayName = `ApiProgress(${getDisplayName(WrappedComponent)})`;
-
-        state = {
-            pendingApiCall: false
-        };
-
-        componentDidMount() {
-            this.requestInterceptors = axios.interceptors.request.use(request => {
-                console.log("geldim", apiPath);
-                this.updateApiCallFor(request.url, true);
+        const updateApiCallFor = (method, url, inProgress) => {
+            if (method !== apiMethod) {
+                return;
+            }
+            if (url === apiPath) {
+                setPendingApiCall(inProgress);
+            } else if (url.startsWith(apiPath)) {
+                setPendingApiCall(inProgress);
+            }
+        }
+        const registerInterceptors = () => {
+            requestInterceptors = axios.interceptors.request.use(request => {
+                const {url, method} = request;
+                updateApiCallFor(method, url, true);
                 return request;
             });
 
-            this.responseInterceptors = axios.interceptors.response.use(
+            responseInterceptors = axios.interceptors.response.use(
                 response => {
-                    this.updateApiCallFor(response.config.url, false);
+                    const {url, method} = response.config;
+                    updateApiCallFor(method, url, false);
                     return response;
                 },
                 error => {
-                    this.updateApiCallFor(error.config.url, false);
+                    const {url, method} = error.config;
+                    updateApiCallFor(method, url, false);
                     throw error;
                 });
         }
 
-        componentWillUnmount() {
-            axios.interceptors.request.eject(this.requestInterceptors);
-            axios.interceptors.response.eject(this.responseInterceptors);
+        const unRegisterInterceptors = () => {
+            axios.interceptors.request.eject(requestInterceptors);
+            axios.interceptors.response.eject(responseInterceptors);
         }
 
-        updateApiCallFor = (url, inProgress) => {
-            if (url === apiPath) {
-                this.setState({ pendingApiCall: inProgress });
-            }
-        }
+        registerInterceptors();
 
-        render() {
-            const { pendingApiCall } = this.state;
-            return <WrappedComponent pendingApiCall={pendingApiCall} {...this.props} />
-        }
-    }
+        return function unmount() {
+            unRegisterInterceptors();
+        };
+    }, [apiPath, apiMethod]);
+
+
+    return pendingApiCall;
 }

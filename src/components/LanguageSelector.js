@@ -1,19 +1,19 @@
 import React from 'react';
 import { changeLanguage } from '../api/apiCalls';
-import { withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 
 const LanguageSelector = props => {
+    const { i18n } = useTranslation();
     const onChangeLanguage = language => {
-        const { i18n } = props;
         i18n.changeLanguage(language);
         changeLanguage(language);
     }
     return (
-        <div className='container'>
-            <span className="fi fi-tr cursor-pointer me-1" onClick={() => onChangeLanguage('tr')}></span>
-            <span className="fi fi-us cursor-pointer me-1" onClick={() => onChangeLanguage('en')}></span>
+        <div className='container d-grid'>
+            <span className=" fi fi-tr me-1 mb-2" onClick={() => onChangeLanguage('tr')} style={{cursor: "pointer"}}></span>
+            <span className="fi fi-us me-1" onClick={() => onChangeLanguage('en')} style={{cursor: "pointer"}}></span>
         </div>
     );
 };
 
-export default withTranslation()(LanguageSelector);
+export default LanguageSelector;
