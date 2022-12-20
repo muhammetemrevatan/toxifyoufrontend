@@ -1,10 +1,10 @@
 import React from 'react';
 
 const ButtonWithProgress = props => {
-    const { disabled, onClick, pendingApiCallBack, text } = props;
+    const { disabled, onClick, pendingApiCallBack, text, className } = props;
 
     return (
-        <button className='btn btn-primary mt-3'
+        <button className={className || 'btn btn-primary'}
                 type='button'
                 disabled={disabled}
                 onClick={onClick}

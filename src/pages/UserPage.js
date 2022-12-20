@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from 'react';
 import ProfileCard from '../components/ProfileCard';
 import {getUser} from "../api/apiCalls";
@@ -6,11 +5,10 @@ import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {useApiProgress} from "../shared/ApiProgress";
 import Spinner from "../components/Spinner";
+import PostFeed from "../components/PostFeed";
 
 const UserPage = () => {
-    const [user, setUser] = useState({
-
-    });
+    const [user, setUser] = useState({});
     const [notFound, setNotFound] = useState(false);
 
     // const {username} = props.match.params;
@@ -18,7 +16,7 @@ const UserPage = () => {
 
     const {t} = useTranslation();
 
-    const pendingApiCall = useApiProgress('get','/api/1.0/users/' + username);
+    const pendingApiCall = useApiProgress('get', '/api/1.0/users/' + username, true);
 
     useEffect(() => {
         setNotFound(false);
@@ -37,10 +35,6 @@ const UserPage = () => {
         loadUser();
     }, [username]);
 
-    if (pendingApiCall) {
-        return <Spinner />;
-    }
-
     if (notFound) {
         return (<div className="container">
             <div className="alert alert-danger text-center">
@@ -54,9 +48,16 @@ const UserPage = () => {
         </div>)
     }
 
-    return (<div className='container'>
-        <ProfileCard user={user}/>
-    </div>);
+    if (pendingApiCall || user.username !== username) {
+        return <Spinner/>;
+    }
+
+
+    return (
+        <div className='container'>
+            <ProfileCard user={user}/>
+            <PostFeed />
+        </div>);
 };
 
 export default UserPage;

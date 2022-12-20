@@ -63,6 +63,7 @@ const UserLoginPage = (props) => {
                     onClick={onClickLogin}
                     disabled={!buttonEnabled || pendingApiCall}
                     text={t("Login")}
+                    className = 'btn btn-primary mt-2'
                 />
             </div>
         </form>

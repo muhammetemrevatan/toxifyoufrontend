@@ -88,6 +88,7 @@ const UserSignupPage = (props) => {
                         disabled={pendingApiCall || passwordRepeatError !== undefined}
                         onClick={onClickSignup}
                         text={t('Sign up')}
+                        className = 'btn btn-primary mt-2'
                     />
                 </div>
             </form>

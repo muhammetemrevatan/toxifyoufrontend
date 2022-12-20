@@ -4,8 +4,9 @@ import {useTranslation} from "react-i18next";
 import Input from "./Input";
 import {updateUser} from "../api/apiCalls";
 import {useApiProgress} from "../shared/ApiProgress";
-import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {useHistory, useParams} from "react-router-dom";
+import {updateSuccess} from "../redux/authActions";
 
 const ProfileCard = props => {
 
@@ -15,24 +16,45 @@ const ProfileCard = props => {
     const pathUsername = routeParams.username;
     // const {user} = props;
     const [tempDisplayNameValue, setTempDisplayNameValue] = useState();
-    const [user,setUser] = useState({});
+    const [user, setUser] = useState({});
     const [newImage, setNewImage] = useState();
+    const [validationErrors, setValidationErrors] = useState({});
 
     useEffect(() => {
         setUser(props.user);
-    },[props.user]);
+    }, [props.user]);
 
     const {username, displayName, image} = user;
     const {t} = useTranslation();
 
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const {push} = history;
+
     useEffect(() => {
-        if(!inChangeEdit) {
+        if (!inChangeEdit) {
             setTempDisplayNameValue(undefined);
             setNewImage(undefined);
         } else {
             setTempDisplayNameValue(displayName);
         }
-    }, [inChangeEdit,displayName]);
+    }, [inChangeEdit, displayName]);
+
+    useEffect(() => {
+        setValidationErrors((previousValidationErrors) => {
+            return {
+                ...previousValidationErrors,
+                displayName: undefined
+            }
+        })
+    }, [tempDisplayNameValue]);
+
+    useEffect(() => {
+        setValidationErrors((previousValidationErrors) => ({
+            ...previousValidationErrors,
+            image: undefined
+        }))
+    }, [newImage]);
 
 
     const onClickSave = async (event) => {
@@ -42,7 +64,6 @@ const ProfileCard = props => {
             image = newImage.split(',')[1];
         }
 
-        //data:image/jpeg;base64,/s8/s64dfs4f6s6
         const body = {
             displayName: tempDisplayNameValue,
             image
@@ -51,8 +72,10 @@ const ProfileCard = props => {
             const response = await updateUser(username, body);
             setInChangeEdit(false);
             setUser(response.data);
+            dispatch(updateSuccess(response.data));
+            push('/');
         } catch (e) {
-            console.log(tempDisplayNameValue, username, "error'a düstü")
+            setValidationErrors(e.response.data.validationErrors);
         }
     }
 
@@ -65,7 +88,7 @@ const ProfileCard = props => {
     const editable = pathUsername === loggedInUsername;
 
     const onChangeFile = (event) => {
-        if(event.target.files.length < 1) {
+        if (event.target.files.length < 1) {
             return;
         }
         const file = event.target.files[0];
@@ -92,29 +115,37 @@ const ProfileCard = props => {
                 {!inChangeEdit && (
                     <>
                         <h3>{displayName} @ {username}</h3>
-                        {editable && <button className="btn btn-success d-inline-flex" onClick={() => setInChangeEdit(true)}>
-                            <i className="material-icons">edit</i>
-                            {t('Edit')}
-                        </button>}
+                        {editable &&
+                            <button className="btn btn-success d-inline-flex" onClick={() => setInChangeEdit(true)}>
+                                <i className="material-icons">edit</i>
+                                {t('Edit')}
+                            </button>}
                     </>)
                 }
                 {inChangeEdit && (
                     <div>
-                        <Input label={t('Change Your Display Name')} defaultValue={displayName}
-                               onChange={onChangeInputValue}/>
-                        <input type='file' className="d-block ms-auto me-auto mt-2"
-                        onChange={onChangeFile}/>
-                        <button className="btn btn-primary me-1 mt-2" style={{display: "inline-grid"}} onClick={onClickSave}>
-                            {pendingApiCall && <span className='spinner-border spinner-border-sm ms-auto me-auto'></span>}
+                        <Input label={t('Change Your Display Name')}
+                               defaultValue={displayName}
+                               onChange={onChangeInputValue}
+                               error={validationErrors.displayName}
+                        />
+                        <Input type='file'
+                               onChange={onChangeFile}
+                               error={validationErrors.image}
+                        />
+                        <button className="btn btn-primary me-1 mt-2" style={{display: "inline-grid"}}
+                                onClick={onClickSave}>
+                            {pendingApiCall &&
+                                <span className='spinner-border spinner-border-sm ms-auto me-auto'></span>}
                             {!pendingApiCall && <i className="material-icons">save</i>}
                             {t('Save')}
                         </button>
                         {!pendingApiCall &&
                             <button className="btn btn-danger ms-1 mt-2 0" style={{display: "inline-grid"}}
-                                 onClick={() => setInChangeEdit(false)}>
-                            <i className="material-icons">close</i>
+                                    onClick={() => setInChangeEdit(false)}>
+                                <i className="material-icons">close</i>
                                 {t('Close')}
-                        </button>}
+                            </button>}
                     </div>
                 )
                 }
