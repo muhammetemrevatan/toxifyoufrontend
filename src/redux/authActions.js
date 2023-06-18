@@ -28,11 +28,12 @@ export const loginHandler = (credentials) => {
     return async function (dispatch) {
         const response = await login(credentials);
         const authState = {
-            ...response.data,
+            ...response.data.userDto,
             // username: username,
             // displayName: response.data.displayName,
             // image: response.data.image,
-            password: credentials.password
+            password: credentials.password,
+            token: response.data.token
         }
         dispatch(loginSuccess(authState));
         return response;

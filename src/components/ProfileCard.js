@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import ProfileImage from "./ProfileImage";
 import {useTranslation} from "react-i18next";
 import Input from "./Input";
-import {updateUser} from "../api/apiCalls";
+import {setEmailOtpPost, updateUser} from "../api/apiCalls";
 import {useApiProgress} from "../shared/ApiProgress";
 import {useDispatch, useSelector} from "react-redux";
 import {useHistory, useParams} from "react-router-dom";
@@ -11,11 +11,13 @@ import {updateSuccess} from "../redux/authActions";
 const ProfileCard = props => {
 
     const [inChangeEdit, setInChangeEdit] = useState(false);
+    const [inEmailApproved, setInEmailApproved] = useState(false);
     const {username: loggedInUsername} = useSelector(store => ({username: store.username}))
     const routeParams = useParams();
     const pathUsername = routeParams.username;
     // const {user} = props;
     const [tempDisplayNameValue, setTempDisplayNameValue] = useState();
+    const [tempOtpCode, setTempOtpCode] = useState();
     const [user, setUser] = useState({});
     const [newImage, setNewImage] = useState();
     const [validationErrors, setValidationErrors] = useState({});
@@ -79,8 +81,25 @@ const ProfileCard = props => {
         }
     }
 
+    const onClickEmailApproved = async (event) => {
+        const body = {
+            otpCode: tempOtpCode
+        };
+        try {
+            const response = await setEmailOtpPost(body);
+            setInEmailApproved(true);
+            push('/');
+        } catch (e) {
+            setValidationErrors(e.response.data.validationErrors);
+        }
+    }
+
     const onChangeInputValue = (event) => {
         setTempDisplayNameValue(event.target.value)
+    }
+
+    const onChangeOtpValue = (event) => {
+        setTempOtpCode(event.target.value)
     }
 
     const pendingApiCall = useApiProgress('put', '/api/1.0/users/' + username);
@@ -150,6 +169,26 @@ const ProfileCard = props => {
                 )
                 }
             </div>
+
+            <div>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+            </div>
+
+            {!inEmailApproved && (
+                <div className="d-inline-block">
+                        <Input label={t('enterotpcode')}
+                               defaultValue={""}
+                               onChange={onChangeOtpValue}
+                               error={""}
+                        />
+                        <button className="btn btn-primary d-inline-flex m-2" onClick={onClickEmailApproved}>
+                            {t('Email Approved')}
+                        </button>
+                </div>)
+            }
         </div>)
 }
 

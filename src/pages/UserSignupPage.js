@@ -14,6 +14,7 @@ const UserSignupPage = (props) => {
         displayName: null,
         password: null,
         passwordRepeat: null,
+        email: null,
     });
     const [errors, setErrors] = useState({});
 
@@ -34,7 +35,7 @@ const UserSignupPage = (props) => {
     const onClickSignup = async event => {
         event.preventDefault();
 
-        const {username, displayName, password} = form;
+        const {username, displayName, password, email} = form;
 
         const {history} = props;
         const {push} = history;
@@ -42,7 +43,8 @@ const UserSignupPage = (props) => {
         const body = {
             username,
             displayName,
-            password
+            password,
+            email
         }
 
         try {
@@ -57,7 +59,7 @@ const UserSignupPage = (props) => {
     };
 
     const {
-        username: usernameError, displayName: displayNameError, password: passwordError
+        username: usernameError, displayName: displayNameError, password: passwordError, email: emailError
     } = errors;
     const pendingApiCallSignup = useApiProgress('post', '/api/1.0/users');
     const pendingApiCallLogin = useApiProgress('post', '/api/1.0/auth');
@@ -68,12 +70,13 @@ const UserSignupPage = (props) => {
     if (form.password !== form.passwordRepeat) {
         passwordRepeatError = t('Password mismatch');
     }
-
     return (
         <div className='container'>
             <form>
                 <h1 className='text-center'>{t('Sign up')}</h1>
                 <Input name="username" label={t("Username")} error={usernameError}
+                       onChange={onChange}/>
+                <Input name="email" label={t("Email")} error={emailError}
                        onChange={onChange}/>
                 <Input name="displayName" label={t("Display Name")} error={displayNameError}
                        onChange={onChange}/>

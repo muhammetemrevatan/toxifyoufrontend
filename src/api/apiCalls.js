@@ -7,16 +7,16 @@ export const changeLanguage = language => {
 }
 
 export const login = (creds) => {
-    return axios.post('/api/1.0/auth', {}, {auth: creds});
+    return axios.post('/api/1.0/auth', creds);
 }
 
 export const getUsers = (size = 3, number = 0) => {
     return axios.get(`/api/1.0/users?pageSize=${size}&currentPage=${number}`);
 }
 
-export const setAuthorizationHeader = ({username, password, isLoggedIn}) => {
+export const setAuthorizationHeader = ({isLoggedIn, token}) => {
     if (isLoggedIn) {
-        axios.defaults.headers['Authorization'] = `Basic ${btoa(username + ':' + password)}`;
+        axios.defaults.headers['Authorization'] = `Bearer ${token}`;
     } else {
         delete axios.defaults.headers['Authorization'];
     }
@@ -55,3 +55,5 @@ export const getNewPosts = (id, username) => {
     const path = username ? `/api/1.0/users/${username}/posts/${id}?direction=after` : `/api/1.0/posts/${id}?direction=after`
     return axios.get(path);
 }
+
+export const setEmailOtpPost = (postBody) => axios.post('otp-code-verification', postBody);

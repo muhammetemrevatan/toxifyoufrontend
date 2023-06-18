@@ -10,6 +10,7 @@ i18n.use(initReactI18next).init({
                 'Sign up': 'Sign up',
                 'Password mismatch': 'Password mismatch',
                 'Username': 'Username',
+                'Email': 'Email',
                 'Display Name': 'Display Name',
                 'Password': 'Password',
                 'Password Repeat': 'Password Repeat',
@@ -27,7 +28,8 @@ i18n.use(initReactI18next).init({
                 'My Profile': "My Profile",
                 "There are no posts": "There are no posts",
                 "Load before posts": "Load before posts",
-                "There are new posts": "There are new posts"
+                "There are new posts": "There are new posts",
+                "enterotpcode": "Please enter the your otp code"
             }
         },
         tr: {
@@ -35,6 +37,7 @@ i18n.use(initReactI18next).init({
                 'Sign up': 'Kayıt ol',
                 'Password mismatch': 'Şifreler uyuşmuyor.',
                 'Username': 'Kullanıcı Adı',
+                'Email': 'E-Posta',
                 'Display Name': 'Görünen İsim',
                 'Password': 'Şifre',
                 'Password Repeat': 'Şifre Tekrar',
@@ -52,7 +55,8 @@ i18n.use(initReactI18next).init({
                 'My Profile': "Profilim",
                 "There are no posts": "Henüz post paylaşılmadı.",
                 "Load before posts": "Diğer postları yükle",
-                "There are new posts": "Yeni postlar var."
+                "There are new posts": "Yeni postlar var.",
+                'enterotpcode': 'Lütfen otp kodunuzu giriniz.'
 
             }
         }
