@@ -3,7 +3,7 @@
 title: "ToxifYou Social Media Platform"
 description: "Modern social media platform frontend built with React, featuring a responsive design and real-time interactions, deployed on Vercel"
 showcase: true
-order: 1
+order: 2
 
 # Technologies
 technologies:
