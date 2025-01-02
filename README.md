@@ -1,3 +1,28 @@
+---
+# Project Basic Information
+title: "ToxifYou Social Media Platform"
+description: "Modern social media platform frontend built with React, featuring a responsive design and real-time interactions, deployed on Vercel"
+showcase: true
+order: 1
+
+# Technologies
+technologies:
+  - "React.js"
+  - "JavaScript"
+  - "HTML5"
+  - "CSS3"
+  - "REST API"
+  - "Vercel"
+
+# Features
+features:
+  - "Responsive Design"
+  - "Real-time Social Interactions"
+  - "Modern UI/UX"
+  - "API Integration"
+  - "Progressive Web App"
+---
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
