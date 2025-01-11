@@ -12,7 +12,6 @@ technologies:
   - "HTML5"
   - "CSS3"
   - "REST API"
-  - "Vercel"
 
 # Features
 features:
